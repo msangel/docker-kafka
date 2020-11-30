@@ -21,6 +21,7 @@ RUN wget -q http://www-eu.apache.org/dist/kafka/"$KAFKA_VERSION"/kafka_"$SCALA_V
 
 # Start Kafka
 COPY scripts/start-kafka.sh /usr/bin/start-kafka.sh
+COPY scripts/entrypoint.sh /usr/bin/entrypoint.sh
 
 # Kafka config
 RUN \
@@ -29,12 +30,12 @@ RUN \
 # Supervisor config
 COPY supervisor/kafka.conf supervisor/zookeeper.conf /etc/supervisor/conf.d/
 
-# 2181 is Zookeeper, 
+# 2181 is Zookeeper,
 # 9092 is Kafka
 EXPOSE 2181 9092
 
-# Start Supervisor
-CMD ["supervisord", "-n"]
-
 # Default directory for shell
 WORKDIR $KAFKA_HOME
+
+# Start Supervisor
+CMD ["/usr/bin/entrypoint.sh"]
