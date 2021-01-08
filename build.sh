@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-docker build -t docker-kafka-interactive ./kafka/
+docker build -t msangel/docker-kafka-interactive ./kafka/

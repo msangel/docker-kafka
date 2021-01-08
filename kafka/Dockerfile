@@ -10,7 +10,14 @@ ENV PATH="${KAFKA_HOME}/bin:${PATH}"
 
 # Install dependencies
 RUN apt-get update && \
-    apt-get install -y zookeeper wget supervisor dnsutils vim nano && \
+    apt-get install -y  zookeeper \
+                        wget \
+                        supervisor \
+                        dnsutils \
+                        vim \
+                        nano \
+                        netcat \
+                        iptables && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get clean
 
@@ -20,15 +27,19 @@ RUN wget -q http://www-eu.apache.org/dist/kafka/"$KAFKA_VERSION"/kafka_"$SCALA_V
     rm /tmp/kafka_"$SCALA_VERSION"-"$KAFKA_VERSION".tgz
 
 # Start Kafka
-COPY scripts/start-kafka.sh /usr/bin/start-kafka.sh
-COPY scripts/entrypoint.sh /usr/bin/entrypoint.sh
+COPY scripts/start-kafka.sh       /usr/bin/start-kafka.sh
+COPY scripts/entrypoint.sh        /usr/bin/entrypoint.sh
+COPY scripts/kafka-pre-publish.sh /usr/bin/kafka-pre-publish.sh
+COPY scripts/firewall-init.sh     /usr/bin/firewall-init.sh
 
 # Kafka config
 RUN \
     sed -i "s|#delete.topic.enable|delete.topic.enable|g" "$KAFKA_HOME"/config/server.properties
 
 # Supervisor config
-COPY supervisor/kafka.conf supervisor/zookeeper.conf /etc/supervisor/conf.d/
+COPY supervisor/kafka.conf     \
+     supervisor/zookeeper.conf \
+     /etc/supervisor/conf.d/
 
 # 2181 is Zookeeper,
 # 9092 is Kafka

@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+source ./firewall-init.sh
+
 /usr/bin/supervisord -n &
 
 SUPERVISOR_PID=$!
